@@ -1,6 +1,7 @@
 from mcp.server.fastmcp import FastMCP
 import subprocess
 import asyncio
+import os
 
 # Create an MCP server
 mcp = FastMCP("TerminalServer")
@@ -20,5 +21,15 @@ async def terminal_tool(command: str) -> str:
     except Exception as e:
         return f"Error: {e}"
 
+@mcp.resource("file://mcpreadme")
+def get_mcp_readme() -> str:
+    """Return the contents of the mcpreadme.md file from the Desktop."""
+    desktop_path = os.path.expanduser("~/Desktop/mcpreadme.md")
+    try:
+        with open(desktop_path, "r", encoding="utf-8") as f:
+            return f.read()
+    except Exception as e:
+        return f"Error reading mcpreadme.md: {e}"
+
 if __name__ == "__main__":
-    mcp.run()
+    mcp.run("stdio")
